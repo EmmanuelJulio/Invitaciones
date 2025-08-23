@@ -1,0 +1,15 @@
+Historia de Usuario 1: Gestión de Invitados y Confirmaciones
+
+Como organizador de la graduación quiero tener una base de datos centralizada donde se registren los invitados, sus teléfonos, nombres y un token único que me permita generar enlaces personalizados de confirmación. De esta forma puedo controlar el estado de cada invitado en relación con su asistencia, registrar si confirmaron o rechazaron la invitación y disponer de un listado actualizado de respuestas. La base de datos debe ser simple de integrar, preferentemente en un servicio gratuito como Supabase, con una tabla que contenga los campos nombre, teléfono, mensaje, token, estado y fecha de confirmación.
+
+Historia de Usuario 2: Página Web para Confirmación de Asistencia
+
+Como invitado quiero recibir una URL personalizada que me lleve a una página web que funcione como una landing page clara y sencilla. Esta landing debe ir autocompletando la información importante del evento, como la fecha, la ubicación, la duración aproximada y el código de vestimenta, que en este caso es elegante sport. Además, debe incluir una aclaración especial de que, por motivo de las elecciones, el servicio de alcohol finalizará a las 12 de la noche. La página debe tener botones destacados para confirmar o rechazar la asistencia, actualizar el estado en la base de datos y mostrar un mensaje claro tras la acción.
+
+Historia de Usuario 3: Envío Masivo de Invitaciones Personalizadas
+
+Como organizador quiero disponer de un script que lea un archivo Excel con la información de los invitados, genere automáticamente el token de cada uno y cree la URL personalizada de confirmación. El script debe actualizar la base de datos con los nuevos registros y enviar un mensaje individual a cada invitado utilizando el contenido definido en una plantilla. Este mensaje debe incluir el nombre del invitado, el enlace de confirmación y resaltar que la página de destino contiene todos los detalles importantes del evento. El envío se realizará a través de WhatsApp utilizando la API oficial de Meta o, en su defecto, mediante SMS con un proveedor como Twilio.
+
+Historia de Usuario 4: Visualización y Control de la Asistencia
+
+Como organizador quiero acceder en cualquier momento a un panel de administración dentro de la página web para ver en tiempo real quiénes confirmaron su asistencia, cuántos permanecen pendientes y quiénes rechazaron. Este panel debe permitir ordenar o filtrar la información, así como contar con una vista rápida del total de confirmados. Además, debería ser posible exportar los datos a un archivo CSV para tener un respaldo. La autenticación al panel puede ser una contraseña sencilla, suficiente para el alcance del evento.
