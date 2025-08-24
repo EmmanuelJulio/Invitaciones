@@ -18,6 +18,7 @@ export const PaginaConfirmacionDemo: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleConfirmar = async (mensaje?: string) => {
+    console.log('Mensaje:', mensaje);
     setLoading(true);
     // Simular loading
     setTimeout(() => {
@@ -28,6 +29,7 @@ export const PaginaConfirmacionDemo: React.FC = () => {
 
   const handleRechazar = async (mensaje?: string) => {
     setLoading(true);
+    console.log('Mensaje:', mensaje);
     // Simular loading
     setTimeout(() => {
       setEstado('rechazado');
