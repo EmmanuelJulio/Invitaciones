@@ -1,20 +1,35 @@
 import React, { useState } from 'react';
 import type { InvitadoResponseDto } from '../../../shared/types/api';
 import { Button } from '../../../shared/components/Button';
+import { EditarInvitadoModal } from './EditarInvitadoModal';
+import type { ActualizarInvitadoDto } from '../services/adminService';
 
 interface TablaInvitadosEnhancedProps {
   invitados: InvitadoResponseDto[];
   onExportar: () => void;
   onExportarMensajesWhatsApp: () => void;
+  onEliminarInvitado: (id: string) => Promise<void>;
+  onEliminarTodos: () => Promise<void>;
+  onActualizarInvitado: (id: string, datos: ActualizarInvitadoDto) => Promise<void>;
+  loading?: boolean;
 }
 
 export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({ 
   invitados, 
   onExportar,
-  onExportarMensajesWhatsApp
+  onExportarMensajesWhatsApp,
+  onEliminarInvitado,
+  onEliminarTodos,
+  onActualizarInvitado,
+  loading = false
 }) => {
   const [filtroEstado, setFiltroEstado] = useState<'todos' | 'pendiente' | 'confirmado' | 'confirmado_incompleto' | 'rechazado'>('todos');
   const [busqueda, setBusqueda] = useState('');
+  const [invitadoEditando, setInvitadoEditando] = useState<InvitadoResponseDto | null>(null);
+  const [confirmandoEliminacion, setConfirmandoEliminacion] = useState<{
+    tipo: 'individual' | 'todos';
+    invitado?: InvitadoResponseDto;
+  } | null>(null);
   
 
   const invitadosFiltrados = invitados.filter(invitado => {
@@ -70,6 +85,39 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
     alert('URL copiada al portapapeles');
   };
 
+  const handleEditarInvitado = (invitado: InvitadoResponseDto) => {
+    setInvitadoEditando(invitado);
+  };
+
+  const handleEliminarInvitado = (invitado: InvitadoResponseDto) => {
+    setConfirmandoEliminacion({
+      tipo: 'individual',
+      invitado
+    });
+  };
+
+  const handleEliminarTodos = () => {
+    setConfirmandoEliminacion({
+      tipo: 'todos'
+    });
+  };
+
+  const confirmarEliminacion = async () => {
+    if (!confirmandoEliminacion) return;
+
+    try {
+      if (confirmandoEliminacion.tipo === 'individual' && confirmandoEliminacion.invitado) {
+        await onEliminarInvitado(confirmandoEliminacion.invitado.id);
+      } else if (confirmandoEliminacion.tipo === 'todos') {
+        await onEliminarTodos();
+      }
+      setConfirmandoEliminacion(null);
+    } catch (error) {
+      console.error('Error eliminando:', error);
+      alert('Error al eliminar. Por favor intente nuevamente.');
+    }
+  };
+
 
   return (
     <div className="card">
@@ -104,6 +152,20 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
             </svg>
             📱 Exportar Mensajes WhatsApp
           </Button>
+
+          {invitados.length > 0 && (
+            <Button
+              variant="danger"
+              onClick={handleEliminarTodos}
+              className="flex items-center"
+              disabled={loading}
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              Eliminar Todos
+            </Button>
+          )}
         </div>
       </div>
 
@@ -260,6 +322,30 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                         </svg>
                       </button>
+
+                      {/* Botón Editar */}
+                      <button
+                        onClick={() => handleEditarInvitado(invitado)}
+                        className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                        title="Editar invitado"
+                        disabled={loading}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                      </button>
+
+                      {/* Botón Eliminar */}
+                      <button
+                        onClick={() => handleEliminarInvitado(invitado)}
+                        className="text-red-600 hover:text-red-900 transition-colors"
+                        title="Eliminar invitado"
+                        disabled={loading}
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -279,6 +365,63 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
           </div>
         )}
       </div>
+
+      {/* Modal de Edición */}
+      {invitadoEditando && (
+        <EditarInvitadoModal
+          invitado={invitadoEditando}
+          isOpen={!!invitadoEditando}
+          onClose={() => setInvitadoEditando(null)}
+          onSave={onActualizarInvitado}
+          loading={loading}
+        />
+      )}
+
+      {/* Modal de Confirmación de Eliminación */}
+      {confirmandoEliminacion && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-lg font-medium text-gray-900">
+                  {confirmandoEliminacion.tipo === 'individual' ? 'Eliminar Invitado' : 'Eliminar Todos los Invitados'}
+                </h3>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <p className="text-sm text-gray-500">
+                {confirmandoEliminacion.tipo === 'individual' 
+                  ? `¿Estás seguro de que quieres eliminar al invitado "${confirmandoEliminacion.invitado?.nombre}"? Esta acción no se puede deshacer.`
+                  : `¿Estás seguro de que quieres eliminar TODOS los invitados (${invitados.length} invitados)? Esta acción no se puede deshacer.`
+                }
+              </p>
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <Button
+                variant="secondary"
+                onClick={() => setConfirmandoEliminacion(null)}
+                disabled={loading}
+              >
+                Cancelar
+              </Button>
+              <Button
+                variant="danger"
+                onClick={confirmarEliminacion}
+                loading={loading}
+              >
+                {confirmandoEliminacion.tipo === 'individual' ? 'Eliminar' : 'Eliminar Todos'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

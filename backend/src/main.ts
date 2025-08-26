@@ -14,6 +14,9 @@ import { ObtenerInvitado } from './application/use-cases/ObtenerInvitado';
 import { ConfirmarAsistencia } from './application/use-cases/ConfirmarAsistencia';
 import { ListarInvitados } from './application/use-cases/ListarInvitados';
 import { CrearInvitacion } from './application/use-cases/CrearInvitacion';
+import { EliminarInvitado } from './application/use-cases/EliminarInvitado';
+import { EliminarTodosInvitados } from './application/use-cases/EliminarTodosInvitados';
+import { ActualizarInvitado } from './application/use-cases/ActualizarInvitado';
 
 // Controllers
 import { InvitadoController } from './infrastructure/web/controllers/InvitadoController';
@@ -82,13 +85,19 @@ class App {
     const confirmarAsistencia = new ConfirmarAsistencia(invitadoRepository, acompananteRepository);
     const listarInvitados = new ListarInvitados(invitadoRepository, acompananteRepository);
     const crearInvitacion = new CrearInvitacion(invitadoRepository);
+    const eliminarInvitado = new EliminarInvitado(invitadoRepository);
+    const eliminarTodosInvitados = new EliminarTodosInvitados(invitadoRepository);
+    const actualizarInvitado = new ActualizarInvitado(invitadoRepository);
 
     // Controllers
     const invitadoController = new InvitadoController(
       obtenerInvitado,
       confirmarAsistencia,
       listarInvitados,
-      crearInvitacion
+      crearInvitacion,
+      eliminarInvitado,
+      eliminarTodosInvitados,
+      actualizarInvitado
     );
     const authController = new AuthController();
 

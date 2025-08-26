@@ -35,5 +35,24 @@ export function createInvitadoRoutes(invitadoController: InvitadoController): Ro
     invitadoController.crearEnLote.bind(invitadoController)
   );
 
+  // Nuevas rutas de administración
+  router.delete('/admin/todos', 
+    authMiddleware, 
+    adminMiddleware, 
+    invitadoController.eliminarTodos.bind(invitadoController)
+  );
+
+  router.delete('/:id', 
+    authMiddleware, 
+    adminMiddleware, 
+    invitadoController.eliminar.bind(invitadoController)
+  );
+
+  router.put('/:id', 
+    authMiddleware, 
+    adminMiddleware, 
+    invitadoController.actualizar.bind(invitadoController)
+  );
+
   return router;
 }

@@ -6,6 +6,13 @@ import type {
   CrearInvitadoDto,
 } from '../../../shared/types/api';
 
+export interface ActualizarInvitadoDto {
+  nombre?: string;
+  telefono?: string;
+  cantidadInvitaciones?: number;
+  mensaje?: string;
+}
+
 export class AdminService {
   static async listarInvitados(): Promise<InvitadoResponseDto[]> {
     const response = await apiClient.get<InvitadoResponseDto[]>('/invitados');
@@ -27,6 +34,19 @@ export class AdminService {
       invitados,
     });
     return response.data;
+  }
+
+  static async eliminarInvitado(id: string): Promise<void> {
+    await apiClient.delete(`/invitados/${id}`);
+  }
+
+  static async eliminarTodosInvitados(): Promise<{ eliminados: number }> {
+    const response = await apiClient.delete('/invitados/admin/todos');
+    return response.data;
+  }
+
+  static async actualizarInvitado(id: string, datos: ActualizarInvitadoDto): Promise<void> {
+    await apiClient.put(`/invitados/${id}`, datos);
   }
 
   static exportarCSV(invitados: InvitadoResponseDto[]): void {

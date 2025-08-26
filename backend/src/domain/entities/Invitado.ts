@@ -5,12 +5,12 @@ import { DatosContacto } from '../value-objects/DatosContacto';
 export class Invitado {
   private readonly id: string;
   private readonly token: Token;
-  private readonly datosContacto: DatosContacto;
+  private datosContacto: DatosContacto;
   private estado: EstadoInvitacion;
   private mensaje?: string;
   private fechaConfirmacion?: Date;
   private readonly fechaCreacion: Date;
-  private readonly cantidadInvitaciones: number;
+  private cantidadInvitaciones: number;
   private readonly fechaLimiteEdicion: Date;
   private whatsappEnviado: boolean;
   private fechaEnvioWhatsapp?: Date;
@@ -101,14 +101,6 @@ export class Invitado {
     this.whatsappEnviado = true;
     this.fechaEnvioWhatsapp = new Date();
     this.intentosEnvio++;
-  }
-
-  incrementarIntentosEnvio(): void {
-    this.intentosEnvio++;
-  }
-
-  actualizarMensaje(nuevoMensaje: string): void {
-    this.mensaje = nuevoMensaje;
   }
 
   puedeEditarAcompanantes(): boolean {
@@ -204,5 +196,26 @@ export class Invitado {
 
   getIntentosEnvio(): number {
     return this.intentosEnvio;
+  }
+
+  // Métodos de actualización
+  actualizarDatosContacto(nuevosDatos: DatosContacto): void {
+    this.datosContacto = nuevosDatos;
+  }
+
+  actualizarCantidadInvitaciones(nuevaCantidad: number): void {
+    if (nuevaCantidad < 1) {
+      throw new Error('La cantidad de invitaciones debe ser mayor a 0');
+    }
+    this.cantidadInvitaciones = nuevaCantidad;
+  }
+
+  actualizarMensaje(nuevoMensaje?: string): void {
+    this.mensaje = nuevoMensaje;
+  }
+
+  incrementarIntentosEnvio(): void {
+    this.intentosEnvio++;
+    this.fechaEnvioWhatsapp = new Date();
   }
 }

@@ -3,13 +3,19 @@ import { ObtenerInvitado } from '../../../application/use-cases/ObtenerInvitado'
 import { ConfirmarAsistencia } from '../../../application/use-cases/ConfirmarAsistencia';
 import { ListarInvitados } from '../../../application/use-cases/ListarInvitados';
 import { CrearInvitacion } from '../../../application/use-cases/CrearInvitacion';
+import { EliminarInvitado } from '../../../application/use-cases/EliminarInvitado';
+import { EliminarTodosInvitados } from '../../../application/use-cases/EliminarTodosInvitados';
+import { ActualizarInvitado } from '../../../application/use-cases/ActualizarInvitado';
 
 export class InvitadoController {
   constructor(
     private readonly obtenerInvitado: ObtenerInvitado,
     private readonly confirmarAsistencia: ConfirmarAsistencia,
     private readonly listarInvitados: ListarInvitados,
-    private readonly crearInvitacion: CrearInvitacion
+    private readonly crearInvitacion: CrearInvitacion,
+    private readonly eliminarInvitado: EliminarInvitado,
+    private readonly eliminarTodosInvitados: EliminarTodosInvitados,
+    private readonly actualizarInvitado: ActualizarInvitado
   ) {}
 
   async obtenerPorToken(req: Request, res: Response): Promise<void> {
@@ -144,6 +150,51 @@ export class InvitadoController {
       res.status(201).json(resultados);
     } catch (error) {
       res.status(400).json({ error: (error as Error).message });
+    }
+  }
+
+  async eliminar(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      
+      if (!id) {
+        res.status(400).json({ error: 'ID es requerido' });
+        return;
+      }
+
+      await this.eliminarInvitado.execute(id);
+      res.status(200).json({ message: 'Invitado eliminado correctamente' });
+    } catch (error) {
+      res.status(404).json({ error: (error as Error).message });
+    }
+  }
+
+  async eliminarTodos(req: Request, res: Response): Promise<void> {
+    try {
+      const resultado = await this.eliminarTodosInvitados.execute();
+      res.status(200).json({ 
+        message: 'Todos los invitados eliminados correctamente',
+        eliminados: resultado.eliminados 
+      });
+    } catch (error) {
+      res.status(500).json({ error: (error as Error).message });
+    }
+  }
+
+  async actualizar(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const datos = req.body;
+      
+      if (!id) {
+        res.status(400).json({ error: 'ID es requerido' });
+        return;
+      }
+
+      await this.actualizarInvitado.execute(id, datos);
+      res.status(200).json({ message: 'Invitado actualizado correctamente' });
+    } catch (error) {
+      res.status(404).json({ error: (error as Error).message });
     }
   }
 }

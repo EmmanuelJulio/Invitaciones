@@ -12,7 +12,18 @@ type TabType = 'lista' | 'cargar';
 
 export const PanelAdmin: React.FC = () => {
   const { isAuthenticated, loading: authLoading, login, logout } = useAuth();
-  const { invitados, estadisticas, loading: adminLoading, error, cargarInvitados, exportarCSV, exportarMensajesWhatsApp } = useAdmin();
+  const { 
+    invitados, 
+    estadisticas, 
+    loading: adminLoading, 
+    error, 
+    cargarInvitados, 
+    exportarCSV, 
+    exportarMensajesWhatsApp,
+    eliminarInvitado,
+    eliminarTodosInvitados,
+    actualizarInvitado
+  } = useAdmin();
   const [tabActiva, setTabActiva] = useState<TabType>('lista');
 
 
@@ -140,6 +151,10 @@ export const PanelAdmin: React.FC = () => {
                   invitados={invitados} 
                   onExportar={exportarCSV}
                   onExportarMensajesWhatsApp={exportarMensajesWhatsApp}
+                  onEliminarInvitado={eliminarInvitado}
+                  onEliminarTodos={eliminarTodosInvitados}
+                  onActualizarInvitado={actualizarInvitado}
+                  loading={adminLoading}
                 />
               )}
               
