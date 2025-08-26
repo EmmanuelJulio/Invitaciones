@@ -16,13 +16,8 @@ export class InvitadoRepositoryImpl implements InvitadoRepository {
       telefono: invitado.getTelefono(),
       mensaje: invitado.getMensaje(),
       token: invitado.getTokenValue(),
-      estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'confirmado_incompleto' | 'rechazado',
-      fecha_confirmacion: invitado.getFechaConfirmacion()?.toISOString(),
-      cantidad_invitaciones: invitado.getCantidadInvitaciones(),
-      fecha_limite_edicion: invitado.getFechaLimiteEdicion().toISOString(),
-      whatsapp_enviado: invitado.getWhatsappEnviado(),
-      fecha_envio_whatsapp: invitado.getFechaEnvioWhatsapp()?.toISOString(),
-      intentos_envio: invitado.getIntentosEnvio()
+      estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado',
+      fecha_confirmacion: invitado.getFechaConfirmacion()?.toISOString()
     };
 
     const savedData = await this.supabaseClient.insert(dbData);
@@ -91,21 +86,15 @@ export class InvitadoRepositoryImpl implements InvitadoRepository {
     const estado = EstadoInvitacion.fromString(dbData.estado);
     const fechaConfirmacion = dbData.fecha_confirmacion ? new Date(dbData.fecha_confirmacion) : undefined;
     const fechaCreacion = new Date(dbData.created_at);
-    const fechaLimiteEdicion = dbData.fecha_limite_edicion ? new Date(dbData.fecha_limite_edicion) : undefined;
 
     return new Invitado(
       dbData.id,
       token,
       datosContacto,
       estado,
-      dbData.cantidad_invitaciones || 1,
       dbData.mensaje,
       fechaConfirmacion,
-      fechaCreacion,
-      fechaLimiteEdicion,
-      dbData.whatsapp_enviado || false,
-      dbData.fecha_envio_whatsapp ? new Date(dbData.fecha_envio_whatsapp) : undefined,
-      dbData.intentos_envio || 0
+      fechaCreacion
     );
   }
 }

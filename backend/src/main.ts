@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 // Infrastructure
 import { SupabaseClient } from './infrastructure/database/SupabaseClient';
 import { InvitadoRepositoryImpl } from './infrastructure/database/InvitadoRepositoryImpl';
-import { AcompananteRepositoryImpl } from './infrastructure/database/AcompananteRepositoryImpl';
 
 // Use Cases
 import { ObtenerInvitado } from './application/use-cases/ObtenerInvitado';
@@ -22,8 +21,6 @@ import { AuthController } from './infrastructure/web/controllers/AuthController'
 // Routes
 import { createInvitadoRoutes } from './infrastructure/web/routes/invitadoRoutes';
 import { createAuthRoutes } from './infrastructure/web/routes/authRoutes';
-import { excelTemplateRoutes } from './infrastructure/web/routes/excelTemplateRoutes';
-import { excelUploadRoutes } from './infrastructure/web/routes/excelUploadRoutes';
 
 // Middlewares
 import { errorHandler, notFoundHandler } from './infrastructure/web/middlewares/errorHandler';
@@ -51,11 +48,7 @@ class App {
     
     // CORS
     this.app.use(cors({
-      origin: [
-        process.env.FRONTEND_URL || 'http://localhost:5173',
-        'http://localhost:5174',
-        'http://localhost:5175'
-      ],
+      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
       credentials: true
     }));
     
@@ -71,12 +64,11 @@ class App {
     // Database
     const supabaseClient = new SupabaseClient();
     const invitadoRepository = new InvitadoRepositoryImpl(supabaseClient);
-    const acompananteRepository = new AcompananteRepositoryImpl();
 
     // Use Cases
-    const obtenerInvitado = new ObtenerInvitado(invitadoRepository, acompananteRepository);
-    const confirmarAsistencia = new ConfirmarAsistencia(invitadoRepository, acompananteRepository);
-    const listarInvitados = new ListarInvitados(invitadoRepository, acompananteRepository);
+    const obtenerInvitado = new ObtenerInvitado(invitadoRepository);
+    const confirmarAsistencia = new ConfirmarAsistencia(invitadoRepository);
+    const listarInvitados = new ListarInvitados(invitadoRepository);
     const crearInvitacion = new CrearInvitacion(invitadoRepository);
 
     // Controllers
@@ -106,19 +98,16 @@ class App {
     // API Routes
     this.app.use('/api/auth', createAuthRoutes((this as any).authController));
     this.app.use('/api/invitados', createInvitadoRoutes((this as any).invitadoController));
-    this.app.use('/api/excel', excelTemplateRoutes);
-    this.app.use('/api/excel', excelUploadRoutes);
 
     // Root route
     this.app.get('/', (req, res) => {
       res.json({
-        message: 'API de Invitaciones de Graduación - v2',
+        message: 'API de Invitaciones de Graduación',
         version: '1.0.0',
         endpoints: {
           health: '/health',
           auth: '/api/auth',
-          invitados: '/api/invitados',
-          excel: '/api/excel'
+          invitados: '/api/invitados'
         }
       });
     });
@@ -135,7 +124,6 @@ class App {
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
       console.log(`📊 Health check: http://localhost:${this.port}/health`);
-      console.log(`📋 Excel template: http://localhost:${this.port}/api/excel/template`);
     });
   }
 }

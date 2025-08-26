@@ -1,23 +1,12 @@
-export interface AcompananteDto {
-  id: string;
-  nombreCompleto: string;
-  telefono?: string;
-  invitadoId: string;
-}
-
 export interface InvitadoResponseDto {
   id: string;
   nombre: string;
-  telefono?: string;
+  telefono: string;
   token: string;
-  estado: 'pendiente' | 'confirmado' | 'rechazado' | 'confirmado_incompleto';
+  estado: 'pendiente' | 'confirmado' | 'rechazado';
   mensaje?: string;
   fechaConfirmacion?: string;
   fechaCreacion: string;
-  cantidadInvitaciones: number;
-  fechaLimiteEdicion?: string;
-  whatsappEnviado: boolean;
-  acompanantes: AcompananteDto[];
 }
 
 export interface EventoInfoDto {
@@ -38,11 +27,8 @@ export interface InvitadoConEventoDto {
 export interface EstadisticasDto {
   pendientes: number;
   confirmados: number;
-  confirmadosIncompleto: number;
   rechazados: number;
   total: number;
-  totalPersonas: number;
-  totalPersonasConfirmadas: number;
   porcentajeConfirmacion: number;
 }
 
@@ -50,17 +36,11 @@ export interface ConfirmarAsistenciaDto {
   token: string;
   confirmado: boolean;
   mensaje?: string;
-  acompanantes?: AcompananteCreacionDto[];
-}
-
-export interface AcompananteCreacionDto {
-  nombreCompleto: string;
-  telefono?: string;
 }
 
 export interface CrearInvitadoDto {
   nombre: string;
-  telefono?: string;
+  telefono: string;
   mensaje?: string;
 }
 

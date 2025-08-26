@@ -24,10 +24,10 @@ export class ConfirmacionEvento {
 
   static graduacion2024(): ConfirmacionEvento {
     return new ConfirmacionEvento(
-      'Invitación a Evento Graduación',
-      new Date('2025-09-06T19:00:00'), // Sábado 6 de septiembre 19 hs
-      'Salón de Eventos Varela II',
-      'Aproximadamente 7 horas',
+      'Graduación 2024',
+      new Date('2024-12-15T18:00:00'), // Fecha ejemplo
+      'Salón de Eventos Plaza Mayor', // Ubicación ejemplo
+      'Aproximadamente 4 horas',
       'Elegante Sport',
       'Por motivo de las elecciones, el servicio de alcohol finalizará a las 12 de la noche.'
     );

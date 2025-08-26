@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ConfirmacionService } from '../services/confirmacionService';
-import type { InvitadoConEventoDto, AcompananteCreacionDto } from '../../../shared/types/api';
+import type { InvitadoConEventoDto } from '../../../shared/types/api';
 
 export const useConfirmacion = (token: string) => {
   const [data, setData] = useState<InvitadoConEventoDto | null>(null);
@@ -38,7 +38,7 @@ export const useConfirmacion = (token: string) => {
     cargarInvitado();
   }, [token]);
 
-  const confirmarAsistencia = async (mensaje?: string, acompanantes?: AcompananteCreacionDto[]) => {
+  const confirmarAsistencia = async (mensaje?: string) => {
     if (!token) return;
 
     try {
@@ -49,7 +49,6 @@ export const useConfirmacion = (token: string) => {
         token,
         confirmado: true,
         mensaje,
-        acompanantes,
       });
 
       // Actualizar el estado local

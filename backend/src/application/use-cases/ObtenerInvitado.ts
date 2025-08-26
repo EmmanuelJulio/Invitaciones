@@ -1,14 +1,10 @@
 import { InvitadoRepository } from '../../domain/repositories/InvitadoRepository';
-import { AcompananteRepository } from '../../domain/repositories/AcompananteRepository';
 import { Token } from '../../domain/value-objects/Token';
 import { ConfirmacionEvento } from '../../domain/entities/ConfirmacionEvento';
 import { InvitadoConEventoDto } from '../dtos/InvitadoResponseDto';
 
 export class ObtenerInvitado {
-  constructor(
-    private readonly invitadoRepository: InvitadoRepository,
-    private readonly acompananteRepository: AcompananteRepository
-  ) {}
+  constructor(private readonly invitadoRepository: InvitadoRepository) {}
 
   async execute(tokenValue: string): Promise<InvitadoConEventoDto | null> {
     try {
@@ -20,7 +16,6 @@ export class ObtenerInvitado {
       }
 
       const evento = ConfirmacionEvento.graduacion2024();
-      const acompanantes = await this.acompananteRepository.findByInvitadoId(invitado.getId());
 
       return {
         invitado: {
@@ -28,19 +23,10 @@ export class ObtenerInvitado {
           nombre: invitado.getNombre(),
           telefono: invitado.getTelefono(),
           token: invitado.getTokenValue(),
-          estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado' | 'confirmado_incompleto',
+          estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado',
           mensaje: invitado.getMensaje(),
           fechaConfirmacion: invitado.getFechaConfirmacion()?.toISOString(),
-          fechaCreacion: invitado.getFechaCreacion().toISOString(),
-          cantidadInvitaciones: invitado.getCantidadInvitaciones(),
-          fechaLimiteEdicion: invitado.getFechaLimiteEdicion().toISOString(),
-          whatsappEnviado: invitado.getWhatsappEnviado(),
-          acompanantes: acompanantes.map(acomp => ({
-            id: acomp.getId(),
-            nombreCompleto: acomp.getNombreCompleto(),
-            telefono: acomp.getTelefono(),
-            invitadoId: acomp.getInvitadoId()
-          }))
+          fechaCreacion: invitado.getFechaCreacion().toISOString()
         },
         evento: {
           titulo: evento.getTitulo(),
