@@ -95,6 +95,29 @@ export const useAdmin = () => {
     }
   };
 
+  const crearInvitado = async (datos: ActualizarInvitadoDto) => {
+    try {
+      setLoading(true);
+      setError(null);
+      // Convertir ActualizarInvitadoDto a CrearInvitadoDto
+      const crearDto = {
+        nombre: datos.nombre!,
+        telefono: datos.telefono,
+        cantidadInvitaciones: datos.cantidadInvitaciones || 1,
+        mensaje: datos.mensaje
+      };
+      await AdminService.crearInvitado(crearDto);
+      // Recargar datos después de crear
+      await cargarInvitados();
+    } catch (err) {
+      console.error('Error creando invitado:', err);
+      setError('Error al crear invitado');
+      throw err; // Re-throw para manejo en componente
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filtrarInvitados = (filtro: 'todos' | 'pendiente' | 'confirmado' | 'rechazado') => {
     if (filtro === 'todos') {
       return invitados;
@@ -117,6 +140,7 @@ export const useAdmin = () => {
     eliminarInvitado,
     eliminarTodosInvitados,
     actualizarInvitado,
+    crearInvitado,
     filtrarInvitados,
   };
 };

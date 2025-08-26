@@ -61,6 +61,7 @@ export interface AcompananteCreacionDto {
 export interface CrearInvitadoDto {
   nombre: string;
   telefono?: string;
+  cantidadInvitaciones?: number;
   mensaje?: string;
 }
 

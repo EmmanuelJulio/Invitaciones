@@ -4,11 +4,12 @@ import type { InvitadoResponseDto } from '../../../shared/types/api';
 import type { ActualizarInvitadoDto } from '../services/adminService';
 
 interface EditarInvitadoModalProps {
-  invitado: InvitadoResponseDto;
+  invitado?: InvitadoResponseDto; // Opcional para crear nuevos
   isOpen: boolean;
   onClose: () => void;
-  onSave: (id: string, datos: ActualizarInvitadoDto) => Promise<void>;
+  onSave: (id: string | null, datos: ActualizarInvitadoDto) => Promise<void>;
   loading: boolean;
+  modo?: 'editar' | 'crear';
 }
 
 export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
@@ -16,13 +17,14 @@ export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  loading
+  loading,
+  modo = 'editar'
 }) => {
   const [formData, setFormData] = useState({
-    nombre: invitado.nombre,
-    telefono: invitado.telefono || '',
-    cantidadInvitaciones: invitado.cantidadInvitaciones,
-    mensaje: invitado.mensaje || ''
+    nombre: invitado?.nombre || '',
+    telefono: invitado?.telefono || '',
+    cantidadInvitaciones: invitado?.cantidadInvitaciones || 1,
+    mensaje: invitado?.mensaje || ''
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -32,12 +34,12 @@ export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
   // Auto-focus y pre-cargar datos cuando se abre el modal
   useEffect(() => {
     if (isOpen) {
-      // Pre-cargar datos del invitado actual
+      // Pre-cargar datos del invitado actual o valores por defecto para nuevo
       setFormData({
-        nombre: invitado.nombre,
-        telefono: invitado.telefono || '',
-        cantidadInvitaciones: invitado.cantidadInvitaciones,
-        mensaje: invitado.mensaje || ''
+        nombre: invitado?.nombre || '',
+        telefono: invitado?.telefono || '',
+        cantidadInvitaciones: invitado?.cantidadInvitaciones || 1,
+        mensaje: invitado?.mensaje || ''
       });
       
       // Focus en el modal y primer campo
@@ -80,31 +82,39 @@ export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
 
     const datosActualizacion: ActualizarInvitadoDto = {};
     
-    // Solo incluir campos que cambiaron
-    if (formData.nombre !== invitado.nombre) {
+    if (modo === 'crear') {
+      // Para crear, incluir todos los campos
       datosActualizacion.nombre = formData.nombre;
-    }
-    if (formData.telefono !== (invitado.telefono || '')) {
       datosActualizacion.telefono = formData.telefono || undefined;
-    }
-    if (formData.cantidadInvitaciones !== invitado.cantidadInvitaciones) {
       datosActualizacion.cantidadInvitaciones = formData.cantidadInvitaciones;
-    }
-    if (formData.mensaje !== (invitado.mensaje || '')) {
-      datosActualizacion.mensaje = formData.mensaje;
-    }
+      datosActualizacion.mensaje = formData.mensaje || undefined;
+    } else {
+      // Para editar, solo incluir campos que cambiaron
+      if (formData.nombre !== invitado?.nombre) {
+        datosActualizacion.nombre = formData.nombre;
+      }
+      if (formData.telefono !== (invitado?.telefono || '')) {
+        datosActualizacion.telefono = formData.telefono || undefined;
+      }
+      if (formData.cantidadInvitaciones !== invitado?.cantidadInvitaciones) {
+        datosActualizacion.cantidadInvitaciones = formData.cantidadInvitaciones;
+      }
+      if (formData.mensaje !== (invitado?.mensaje || '')) {
+        datosActualizacion.mensaje = formData.mensaje;
+      }
 
-    // Si no hay cambios, cerrar modal
-    if (Object.keys(datosActualizacion).length === 0) {
-      onClose();
-      return;
+      // Si no hay cambios en modo editar, cerrar modal
+      if (Object.keys(datosActualizacion).length === 0) {
+        onClose();
+        return;
+      }
     }
 
     try {
-      await onSave(invitado.id, datosActualizacion);
+      await onSave(invitado?.id || null, datosActualizacion);
       onClose();
     } catch (error) {
-      console.error('Error actualizando invitado:', error);
+      console.error(`Error ${modo === 'crear' ? 'creando' : 'actualizando'} invitado:`, error);
     }
   };
 
@@ -126,7 +136,7 @@ export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-900">
-              Editar Invitado
+              {modo === 'crear' ? 'Crear Nuevo Invitado' : 'Editar Invitado'}
             </h3>
             <button
               onClick={onClose}
@@ -256,7 +266,7 @@ export const EditarInvitadoModal: React.FC<EditarInvitadoModalProps> = ({
                 loading={loading}
                 className="bg-blue-600 hover:bg-blue-700"
               >
-                Guardar cambios
+                {modo === 'crear' ? 'Crear Invitado' : 'Guardar cambios'}
               </Button>
             </div>
           </form>

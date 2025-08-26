@@ -9,7 +9,7 @@ export class CrearInvitacion {
   async execute(dto: CrearInvitadoDto): Promise<InvitadoResponseDto> {
     try {
       const id = uuidv4();
-      const invitado = Invitado.create(id, dto.nombre, dto.telefono, 1, dto.mensaje);
+      const invitado = Invitado.create(id, dto.nombre, dto.telefono, dto.cantidadInvitaciones || 1, dto.mensaje);
       
       const invitadoGuardado = await this.invitadoRepository.save(invitado);
 

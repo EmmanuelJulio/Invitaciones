@@ -110,16 +110,17 @@ export class InvitadoController {
 
   async crear(req: Request, res: Response): Promise<void> {
     try {
-      const { nombre, telefono, mensaje } = req.body;
+      const { nombre, telefono, cantidadInvitaciones, mensaje } = req.body;
       
-      if (!nombre || !telefono) {
-        res.status(400).json({ error: 'Nombre y teléfono son requeridos' });
+      if (!nombre) {
+        res.status(400).json({ error: 'Nombre es requerido' });
         return;
       }
 
       const resultado = await this.crearInvitacion.execute({
         nombre,
         telefono,
+        cantidadInvitaciones,
         mensaje
       });
 

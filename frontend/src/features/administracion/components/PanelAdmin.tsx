@@ -22,7 +22,8 @@ export const PanelAdmin: React.FC = () => {
     exportarMensajesWhatsApp,
     eliminarInvitado,
     eliminarTodosInvitados,
-    actualizarInvitado
+    actualizarInvitado,
+    crearInvitado
   } = useAdmin();
   const [tabActiva, setTabActiva] = useState<TabType>('lista');
 
@@ -159,6 +160,7 @@ export const PanelAdmin: React.FC = () => {
                   onEliminarInvitado={eliminarInvitado}
                   onEliminarTodos={eliminarTodosInvitados}
                   onActualizarInvitado={actualizarInvitado}
+                  onCrearInvitado={crearInvitado}
                   loading={adminLoading}
                 />
               )}

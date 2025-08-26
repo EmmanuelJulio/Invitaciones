@@ -11,6 +11,7 @@ interface TablaInvitadosEnhancedProps {
   onEliminarInvitado: (id: string) => Promise<void>;
   onEliminarTodos: () => Promise<void>;
   onActualizarInvitado: (id: string, datos: ActualizarInvitadoDto) => Promise<void>;
+  onCrearInvitado: (datos: ActualizarInvitadoDto) => Promise<void>;
   loading?: boolean;
 }
 
@@ -21,11 +22,13 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
   onEliminarInvitado,
   onEliminarTodos,
   onActualizarInvitado,
+  onCrearInvitado,
   loading = false
 }) => {
   const [filtroEstado, setFiltroEstado] = useState<'todos' | 'pendiente' | 'confirmado' | 'confirmado_incompleto' | 'rechazado'>('todos');
   const [busqueda, setBusqueda] = useState('');
   const [invitadoEditando, setInvitadoEditando] = useState<InvitadoResponseDto | null>(null);
+  const [modoModal, setModoModal] = useState<'editar' | 'crear'>('editar');
   const [confirmandoEliminacion, setConfirmandoEliminacion] = useState<{
     tipo: 'individual' | 'todos';
     invitado?: InvitadoResponseDto;
@@ -102,6 +105,12 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
 
   const handleEditarInvitado = (invitado: InvitadoResponseDto) => {
     setInvitadoEditando(invitado);
+    setModoModal('editar');
+  };
+
+  const handleCrearInvitado = () => {
+    setInvitadoEditando(null);
+    setModoModal('crear');
   };
 
   const handleEliminarInvitado = (invitado: InvitadoResponseDto) => {
@@ -133,6 +142,13 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
     }
   };
 
+  const handleGuardarModal = async (id: string | null, datos: ActualizarInvitadoDto) => {
+    if (modoModal === 'crear') {
+      await onCrearInvitado(datos);
+    } else if (id) {
+      await onActualizarInvitado(id, datos);
+    }
+  };
 
   return (
     <div className="card">
@@ -146,6 +162,20 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
         </div>
         
         <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
+          {/* Botón Crear Invitado - Visible en todas las pantallas */}
+          <Button
+            variant="primary"
+            onClick={handleCrearInvitado}
+            className="flex items-center order-first"
+            disabled={loading}
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            <span className="hidden sm:inline">Crear Invitado</span>
+            <span className="sm:hidden">Crear</span>
+          </Button>
+
           {/* Botones ocultos en móvil */}
           <Button
             variant="secondary"
@@ -533,14 +563,18 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
         )}
       </div>
 
-      {/* Modal de Edición */}
-      {invitadoEditando && (
+      {/* Modal de Edición/Creación */}
+      {(invitadoEditando || modoModal === 'crear') && (
         <EditarInvitadoModal
           invitado={invitadoEditando}
-          isOpen={!!invitadoEditando}
-          onClose={() => setInvitadoEditando(null)}
-          onSave={onActualizarInvitado}
+          isOpen={!!(invitadoEditando || modoModal === 'crear')}
+          onClose={() => {
+            setInvitadoEditando(null);
+            setModoModal('editar');
+          }}
+          onSave={handleGuardarModal}
           loading={loading}
+          modo={modoModal}
         />
       )}
 
