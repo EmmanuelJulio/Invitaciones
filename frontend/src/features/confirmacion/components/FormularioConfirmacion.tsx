@@ -109,7 +109,7 @@ export const FormularioConfirmacion: React.FC<FormularioConfirmacionProps> = ({
             
             {acompanantesExistentes.length > 0 ? (
               <div className="space-y-3 mb-6">
-                {acompanantesExistentes.map((acompanante, index) => (
+                {acompanantesExistentes.map((acompanante) => (
                   <div key={acompanante.id} className="flex items-center justify-between bg-white/20 rounded-lg p-3">
                     <div>
                       <p className="font-medium text-white">{acompanante.nombreCompleto}</p>

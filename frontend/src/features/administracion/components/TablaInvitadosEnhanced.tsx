@@ -21,7 +21,7 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
     const matchEstado = filtroEstado === 'todos' || invitado.estado === filtroEstado;
     const matchBusqueda = busqueda === '' || 
       invitado.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      invitado.telefono.includes(busqueda);
+      (invitado.telefono && invitado.telefono.includes(busqueda));
     
     return matchEstado && matchBusqueda;
   });
@@ -175,7 +175,7 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
                           <div className="text-xs font-medium text-gray-700 uppercase tracking-wide">
                             Acompañantes:
                           </div>
-                          {invitado.acompanantes.map((acompanante, index) => (
+                          {invitado.acompanantes.map((acompanante) => (
                             <div key={acompanante.id} className="flex items-center space-x-2">
                               <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                               <div className="text-xs text-gray-600">

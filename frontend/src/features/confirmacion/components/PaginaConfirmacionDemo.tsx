@@ -89,8 +89,20 @@ export const PaginaConfirmacionDemo: React.FC = () => {
 
           {/* Formulario de confirmación */}
           <FormularioConfirmacion
-            nombre="Juan Carlos Pérez"
-            estadoActual={estado}
+            invitado={{
+              id: "demo-1",
+              nombre: "Juan Carlos Pérez",
+              telefono: undefined,
+              estado: estado,
+              cantidadInvitaciones: 1,
+              fechaConfirmacion: undefined,
+              mensaje: undefined,
+              acompanantes: [],
+              fechaCreacion: new Date().toISOString(),
+              fechaLimiteEdicion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              whatsappEnviado: false,
+              token: "demo-token-123"
+            }}
             onConfirmar={handleConfirmar}
             onRechazar={handleRechazar}
             loading={loading}

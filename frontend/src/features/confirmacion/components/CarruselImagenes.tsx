@@ -6,13 +6,13 @@ import imagen2 from '../../../img/2.webp';
 // import imagen3 from '../../../img/3.webp'; // Descomenta cuando tengas la tercera imagen
 
 interface CarruselImagenesProps {
-  imagenes: string[];
+  imagenes?: string[];
   autoPlay?: boolean;
   interval?: number;
 }
 
 export const CarruselImagenes: React.FC<CarruselImagenesProps> = ({ 
-  imagenes = [], 
+  imagenes, 
   autoPlay = true, 
   interval = 4000 
 }) => {
@@ -25,7 +25,7 @@ export const CarruselImagenes: React.FC<CarruselImagenesProps> = ({
     // imagen3, // Descomenta cuando tengas la tercera imagen
   ].filter(Boolean); // Filtra valores undefined
 
-  const imagenesActuales = imagenes.length > 0 ? imagenes : imagenesDefault;
+  const imagenesActuales = imagenes && imagenes.length > 0 ? imagenes : imagenesDefault;
 
   useEffect(() => {
     if (!autoPlay || imagenesActuales.length <= 1) return;

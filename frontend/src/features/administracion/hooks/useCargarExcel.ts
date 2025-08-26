@@ -12,7 +12,7 @@ export const useCargarExcel = (onSuccess?: () => void) => {
     try {
       const resultado = await excelService.uploadExcel(archivo);
       
-      if (resultado.success) {
+      if (resultado.success && resultado.data) {
         setInvitados(resultado.data.invitados);
         setErrores(resultado.data.errores || []);
       } else {

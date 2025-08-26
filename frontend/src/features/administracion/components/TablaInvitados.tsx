@@ -15,7 +15,7 @@ export const TablaInvitados: React.FC<TablaInvitadosProps> = ({ invitados, onExp
     const matchEstado = filtroEstado === 'todos' || invitado.estado === filtroEstado;
     const matchBusqueda = busqueda === '' || 
       invitado.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-      invitado.telefono.includes(busqueda);
+      (invitado.telefono && invitado.telefono.includes(busqueda));
     
     return matchEstado && matchBusqueda;
   });

@@ -5,7 +5,7 @@ import { ConfirmacionEvento } from '../../domain/entities/ConfirmacionEvento';
 export interface EnvioWhatsAppResult {
   invitadoId: string;
   nombre: string;
-  telefono: string;
+  telefono?: string;
   exitoso: boolean;
   error?: string;
   urlConfirmacion: string;
@@ -28,7 +28,21 @@ export class EnviarWhatsApp {
       throw new Error('Invitado no encontrado');
     }
 
+    const telefono = invitado.getTelefono();
     const urlConfirmacion = `${this.frontendUrl}/confirmar/${invitado.getTokenValue()}`;
+    
+    // Si no hay teléfono, no se puede enviar WhatsApp
+    if (!telefono) {
+      return {
+        invitadoId: invitado.getId(),
+        nombre: invitado.getNombre(),
+        telefono: undefined,
+        exitoso: false,
+        error: 'El invitado no tiene número de teléfono registrado',
+        urlConfirmacion
+      };
+    }
+
     const evento = ConfirmacionEvento.graduacion2024();
 
     const mensajeData = {
@@ -46,7 +60,7 @@ export class EnviarWhatsApp {
 
     try {
       const exitoso = await this.whatsAppService.sendWhatsAppMessage(
-        invitado.getTelefono(),
+        telefono,
         mensaje
       );
 
@@ -61,7 +75,7 @@ export class EnviarWhatsApp {
       return {
         invitadoId: invitado.getId(),
         nombre: invitado.getNombre(),
-        telefono: invitado.getTelefono(),
+        telefono: telefono,
         exitoso,
         error: exitoso ? undefined : 'Error enviando WhatsApp',
         urlConfirmacion
@@ -74,7 +88,7 @@ export class EnviarWhatsApp {
       return {
         invitadoId: invitado.getId(),
         nombre: invitado.getNombre(),
-        telefono: invitado.getTelefono(),
+        telefono: telefono,
         exitoso: false,
         error: (error as Error).message,
         urlConfirmacion
@@ -98,7 +112,7 @@ export class EnviarWhatsApp {
         resultados.push({
           invitadoId: invitado.getId(),
           nombre: invitado.getNombre(),
-          telefono: invitado.getTelefono(),
+          telefono: invitado.getTelefono() || undefined,
           exitoso: false,
           error: (error as Error).message,
           urlConfirmacion: `${this.frontendUrl}/confirmar/${invitado.getTokenValue()}`
@@ -126,7 +140,7 @@ export class EnviarWhatsApp {
         resultados.push({
           invitadoId: invitado.getId(),
           nombre: invitado.getNombre(),
-          telefono: invitado.getTelefono(),
+          telefono: invitado.getTelefono() || undefined,
           exitoso: false,
           error: (error as Error).message,
           urlConfirmacion: `${this.frontendUrl}/confirmar/${invitado.getTokenValue()}`

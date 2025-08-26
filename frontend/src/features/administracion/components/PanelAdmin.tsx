@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useAdmin } from '../hooks/useAdmin';
-import { useCargarExcel } from '../hooks/useCargarExcel';
 import { LoginForm } from './LoginForm';
 import { EstadisticasCard } from './EstadisticasCard';
 import { TablaInvitadosEnhanced } from './TablaInvitadosEnhanced';

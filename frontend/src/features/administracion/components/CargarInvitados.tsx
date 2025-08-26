@@ -3,7 +3,6 @@ import { Button } from '../../../shared/components/Button';
 import { LoadingSpinner } from '../../../shared/components/LoadingSpinner';
 import { VistaPrevia } from './VistaPrevia';
 import { useCargarExcel } from '../hooks/useCargarExcel';
-import type { InvitadoExcel } from '../types/excel';
 
 interface CargarInvitadosProps {
   onSuccess: () => void;
