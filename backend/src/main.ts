@@ -49,13 +49,17 @@ class App {
     // Security
     this.app.use(helmet());
     
-    // CORS
+    // CORS - Support multiple origins from environment variable
+    const allowedOrigins = process.env.FRONTEND_URL 
+      ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+      : ['http://localhost:5173'];
+    
+    // Add additional local dev ports
+    const devPorts = ['http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'];
+    const allOrigins = [...allowedOrigins, ...devPorts];
+    
     this.app.use(cors({
-      origin: [
-        process.env.FRONTEND_URL || 'http://localhost:5173',
-        'http://localhost:5174',
-        'http://localhost:5175'
-      ],
+      origin: allOrigins,
       credentials: true
     }));
     
@@ -133,7 +137,15 @@ class App {
     this.app.listen(this.port, () => {
       console.log(`🚀 Server running on port ${this.port}`);
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`🌐 CORS enabled for: ${process.env.FRONTEND_URL || 'http://localhost:5173'}`);
+      
+      // Show allowed origins
+      const allowedOrigins = process.env.FRONTEND_URL 
+        ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+        : ['http://localhost:5173'];
+      const devPorts = ['http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'];
+      const allOrigins = [...allowedOrigins, ...devPorts];
+      
+      console.log(`🌐 CORS enabled for: ${allOrigins.join(', ')}`);
       console.log(`📊 Health check: http://localhost:${this.port}/health`);
       console.log(`📋 Excel template: http://localhost:${this.port}/api/excel/template`);
     });
