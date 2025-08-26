@@ -34,6 +34,7 @@ export interface DatabaseInvitado {
   whatsapp_enviado: boolean;
   fecha_envio_whatsapp?: string;
   intentos_envio: number;
+  notificado?: boolean;
 }
 
 export interface DatabaseAcompanante {

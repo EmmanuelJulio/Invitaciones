@@ -17,6 +17,7 @@ import { CrearInvitacion } from './application/use-cases/CrearInvitacion';
 import { EliminarInvitado } from './application/use-cases/EliminarInvitado';
 import { EliminarTodosInvitados } from './application/use-cases/EliminarTodosInvitados';
 import { ActualizarInvitado } from './application/use-cases/ActualizarInvitado';
+import { ActualizarNotificado } from './application/use-cases/ActualizarNotificado';
 
 // Controllers
 import { InvitadoController } from './infrastructure/web/controllers/InvitadoController';
@@ -87,7 +88,8 @@ class App {
     const crearInvitacion = new CrearInvitacion(invitadoRepository);
     const eliminarInvitado = new EliminarInvitado(invitadoRepository);
     const eliminarTodosInvitados = new EliminarTodosInvitados(invitadoRepository);
-    const actualizarInvitado = new ActualizarInvitado(invitadoRepository);
+    const actualizarInvitado = new ActualizarInvitado(invitadoRepository, acompananteRepository);
+    const actualizarNotificado = new ActualizarNotificado(invitadoRepository);
 
     // Controllers
     const invitadoController = new InvitadoController(
@@ -97,7 +99,8 @@ class App {
       crearInvitacion,
       eliminarInvitado,
       eliminarTodosInvitados,
-      actualizarInvitado
+      actualizarInvitado,
+      actualizarNotificado
     );
     const authController = new AuthController();
 

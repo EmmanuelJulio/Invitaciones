@@ -17,6 +17,7 @@ export interface InvitadoResponseDto {
   cantidadInvitaciones: number;
   fechaLimiteEdicion?: string;
   whatsappEnviado: boolean;
+  notificado?: boolean;
   acompanantes: AcompananteDto[];
 }
 

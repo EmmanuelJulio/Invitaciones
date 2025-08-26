@@ -1,4 +1,5 @@
 import { InvitadoRepository } from '../../domain/repositories/InvitadoRepository';
+import { AcompananteRepository } from '../../domain/repositories/AcompananteRepository';
 import { DatosContacto } from '../../domain/value-objects/DatosContacto';
 
 export interface ActualizarInvitadoDto {
@@ -9,7 +10,10 @@ export interface ActualizarInvitadoDto {
 }
 
 export class ActualizarInvitado {
-  constructor(private readonly invitadoRepository: InvitadoRepository) {}
+  constructor(
+    private readonly invitadoRepository: InvitadoRepository,
+    private readonly acompananteRepository: AcompananteRepository
+  ) {}
 
   async execute(id: string, datos: ActualizarInvitadoDto): Promise<void> {
     const invitado = await this.invitadoRepository.findById(id);
@@ -29,7 +33,20 @@ export class ActualizarInvitado {
 
     // Actualizar cantidad de invitaciones
     if (datos.cantidadInvitaciones !== undefined) {
-      invitado.actualizarCantidadInvitaciones(datos.cantidadInvitaciones);
+      // Obtener cantidad actual de acompañantes para recalcular estado
+      const acompanantes = await this.acompananteRepository.findByInvitadoId(invitado.getId());
+      const cantidadAcompanantes = acompanantes.length;
+      
+      console.log(`📊 Actualizando invitado ${invitado.getNombre()}:`, {
+        estadoAnterior: invitado.getEstadoValue(),
+        cantidadAnterior: invitado.getCantidadInvitaciones(),
+        cantidadNueva: datos.cantidadInvitaciones,
+        acompananteActuales: cantidadAcompanantes
+      });
+      
+      invitado.actualizarCantidadInvitaciones(datos.cantidadInvitaciones, cantidadAcompanantes);
+      
+      console.log(`✅ Estado después de actualizar: ${invitado.getEstadoValue()}`);
     }
 
     // Actualizar mensaje

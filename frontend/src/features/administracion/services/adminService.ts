@@ -16,6 +16,19 @@ export interface ActualizarInvitadoDto {
 export class AdminService {
   static async listarInvitados(): Promise<InvitadoResponseDto[]> {
     const response = await apiClient.get<InvitadoResponseDto[]>('/invitados');
+    
+    // Debug: verificar la respuesta cruda del servidor
+    console.log('🌐 AdminService - Raw API response:', response.data);
+    const noelia = response.data.find(inv => inv.nombre.includes('Noelia'));
+    if (noelia) {
+      console.log('👤 AdminService - Noelia in raw response:', {
+        nombre: noelia.nombre,
+        notificado: noelia.notificado,
+        hasNotificadoField: noelia.hasOwnProperty('notificado'),
+        allKeys: Object.keys(noelia)
+      });
+    }
+    
     return response.data;
   }
 
@@ -47,6 +60,10 @@ export class AdminService {
 
   static async actualizarInvitado(id: string, datos: ActualizarInvitadoDto): Promise<void> {
     await apiClient.put(`/invitados/${id}`, datos);
+  }
+
+  static async actualizarNotificado(id: string, notificado: boolean): Promise<void> {
+    await apiClient.patch(`/invitados/${id}/notificado`, { notificado });
   }
 
   static exportarCSV(invitados: InvitadoResponseDto[]): void {
@@ -108,8 +125,6 @@ export class AdminService {
       const mensajeWhatsApp = `🎓 ¡Invitación a mi Graduación!
 
 Hola ${invitado.nombre}!
-
-Te invito cordialmente a mi graduación de Ingeniería.
 
 📅 Sábado 6 de Septiembre, 19:00hs
 📍 Salón de Eventos Varela II

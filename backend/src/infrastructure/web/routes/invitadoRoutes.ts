@@ -54,5 +54,11 @@ export function createInvitadoRoutes(invitadoController: InvitadoController): Ro
     invitadoController.actualizar.bind(invitadoController)
   );
 
+  router.patch('/:id/notificado', 
+    authMiddleware, 
+    adminMiddleware, 
+    invitadoController.actualizarNotificadoEndpoint.bind(invitadoController)
+  );
+
   return router;
 }

@@ -61,7 +61,8 @@ export class InvitadoRepositoryImpl implements InvitadoRepository {
       mensaje: invitado.getMensaje(),
       cantidad_invitaciones: invitado.getCantidadInvitaciones(),
       estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado',
-      fecha_confirmacion: invitado.getFechaConfirmacion()?.toISOString()
+      fecha_confirmacion: invitado.getFechaConfirmacion()?.toISOString(),
+      notificado: invitado.getNotificado()
     };
 
     const updatedData = await this.supabaseClient.update(invitado.getId(), updateData);
@@ -106,7 +107,8 @@ export class InvitadoRepositoryImpl implements InvitadoRepository {
       fechaLimiteEdicion,
       dbData.whatsapp_enviado || false,
       dbData.fecha_envio_whatsapp ? new Date(dbData.fecha_envio_whatsapp) : undefined,
-      dbData.intentos_envio || 0
+      dbData.intentos_envio || 0,
+      dbData.notificado || false
     );
   }
 }

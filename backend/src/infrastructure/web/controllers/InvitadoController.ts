@@ -6,6 +6,7 @@ import { CrearInvitacion } from '../../../application/use-cases/CrearInvitacion'
 import { EliminarInvitado } from '../../../application/use-cases/EliminarInvitado';
 import { EliminarTodosInvitados } from '../../../application/use-cases/EliminarTodosInvitados';
 import { ActualizarInvitado } from '../../../application/use-cases/ActualizarInvitado';
+import { ActualizarNotificado } from '../../../application/use-cases/ActualizarNotificado';
 
 export class InvitadoController {
   constructor(
@@ -15,7 +16,8 @@ export class InvitadoController {
     private readonly crearInvitacion: CrearInvitacion,
     private readonly eliminarInvitado: EliminarInvitado,
     private readonly eliminarTodosInvitados: EliminarTodosInvitados,
-    private readonly actualizarInvitado: ActualizarInvitado
+    private readonly actualizarInvitado: ActualizarInvitado,
+    private readonly actualizarNotificado: ActualizarNotificado
   ) {}
 
   async obtenerPorToken(req: Request, res: Response): Promise<void> {
@@ -196,6 +198,36 @@ export class InvitadoController {
       res.status(200).json({ message: 'Invitado actualizado correctamente' });
     } catch (error) {
       res.status(404).json({ error: (error as Error).message });
+    }
+  }
+
+  async actualizarNotificadoEndpoint(req: Request, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const { notificado } = req.body;
+      
+      console.log('Controller: actualizarNotificado request', { id, notificado, body: req.body });
+      
+      if (!id) {
+        res.status(400).json({ error: 'ID es requerido' });
+        return;
+      }
+
+      if (typeof notificado !== 'boolean') {
+        res.status(400).json({ error: 'El campo notificado es requerido y debe ser boolean' });
+        return;
+      }
+
+      await this.actualizarNotificado.execute(id, notificado);
+      console.log('Controller: actualización exitosa');
+      res.status(200).json({ 
+        message: 'Estado de notificación actualizado correctamente',
+        id,
+        notificado 
+      });
+    } catch (error) {
+      console.error('Controller: error actualizando notificado:', error);
+      res.status(400).json({ error: (error as Error).message });
     }
   }
 }

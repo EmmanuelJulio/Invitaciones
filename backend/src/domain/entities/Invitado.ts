@@ -15,6 +15,7 @@ export class Invitado {
   private whatsappEnviado: boolean;
   private fechaEnvioWhatsapp?: Date;
   private intentosEnvio: number;
+  private notificado: boolean;
 
   constructor(
     id: string,
@@ -28,7 +29,8 @@ export class Invitado {
     fechaLimiteEdicion?: Date,
     whatsappEnviado: boolean = false,
     fechaEnvioWhatsapp?: Date,
-    intentosEnvio: number = 0
+    intentosEnvio: number = 0,
+    notificado: boolean = false
   ) {
     this.id = id;
     this.token = token;
@@ -42,6 +44,7 @@ export class Invitado {
     this.whatsappEnviado = whatsappEnviado;
     this.fechaEnvioWhatsapp = fechaEnvioWhatsapp;
     this.intentosEnvio = intentosEnvio;
+    this.notificado = notificado;
   }
 
   static create(
@@ -198,20 +201,50 @@ export class Invitado {
     return this.intentosEnvio;
   }
 
+  getNotificado(): boolean {
+    return this.notificado;
+  }
+
   // Métodos de actualización
   actualizarDatosContacto(nuevosDatos: DatosContacto): void {
     this.datosContacto = nuevosDatos;
   }
 
-  actualizarCantidadInvitaciones(nuevaCantidad: number): void {
+  actualizarCantidadInvitaciones(nuevaCantidad: number, acompananteCount: number = 0): void {
     if (nuevaCantidad < 1) {
       throw new Error('La cantidad de invitaciones debe ser mayor a 0');
     }
+    
+    const cantidadAnterior = this.cantidadInvitaciones;
     this.cantidadInvitaciones = nuevaCantidad;
+    
+    // Recalcular estado si está confirmado incompleto
+    this.recalcularEstadoConfirmacion(acompananteCount);
+  }
+  
+  private recalcularEstadoConfirmacion(acompananteCount: number): void {
+    // Solo recalcular si está en estado confirmado_incompleto
+    if (!this.estado.isConfirmadoIncompleto()) {
+      return;
+    }
+    
+    // Calcular personas confirmadas: 1 (titular) + acompañantes
+    const personasConfirmadas = 1 + acompananteCount;
+    
+    // Si las personas confirmadas ya son suficientes para la nueva cantidad,
+    // cambiar a confirmado completo
+    if (personasConfirmadas >= this.cantidadInvitaciones) {
+      this.estado = EstadoInvitacion.confirmado();
+      console.log(`✅ Estado actualizado de confirmado_incompleto a confirmado para ${this.datosContacto.getNombre()}`);
+    }
   }
 
   actualizarMensaje(nuevoMensaje?: string): void {
     this.mensaje = nuevoMensaje;
+  }
+
+  actualizarNotificado(notificado: boolean): void {
+    this.notificado = notificado;
   }
 
   incrementarIntentosEnvio(): void {

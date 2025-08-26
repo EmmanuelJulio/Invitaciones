@@ -18,6 +18,18 @@ export const useAdmin = () => {
         AdminService.obtenerEstadisticas(),
       ]);
       
+      // Debug: verificar si los datos incluyen el campo notificado
+      console.log('🔍 Datos recibidos del API:', invitadosData);
+      const noelia = invitadosData.find(inv => inv.nombre.includes('Noelia'));
+      if (noelia) {
+        console.log('👤 Noelia en datos API:', {
+          nombre: noelia.nombre,
+          notificado: noelia.notificado,
+          hasNotificadoField: noelia.hasOwnProperty('notificado'),
+          allKeys: Object.keys(noelia)
+        });
+      }
+      
       setInvitados(invitadosData);
       setEstadisticas(estadisticasData);
     } catch (err) {
@@ -118,6 +130,37 @@ export const useAdmin = () => {
     }
   };
 
+  const actualizarNotificado = async (id: string, notificado: boolean) => {
+    try {
+      console.log('useAdmin: actualizando notificado', { id, notificado });
+      setError(null);
+      
+      // Actualización optimista - actualizar estado local inmediatamente
+      setInvitados(prevInvitados => 
+        prevInvitados.map(inv => 
+          inv.id === id ? { ...inv, notificado } : inv
+        )
+      );
+      
+      // Realizar la actualización en el servidor
+      await AdminService.actualizarNotificado(id, notificado);
+      console.log('useAdmin: actualización exitosa');
+      
+    } catch (err) {
+      console.error('Error actualizando notificado:', err);
+      
+      // Revertir cambio optimista si falla
+      setInvitados(prevInvitados => 
+        prevInvitados.map(inv => 
+          inv.id === id ? { ...inv, notificado: !notificado } : inv
+        )
+      );
+      
+      setError('Error al actualizar estado de notificación');
+      throw err; // Re-throw para manejo en componente
+    }
+  };
+
   const filtrarInvitados = (filtro: 'todos' | 'pendiente' | 'confirmado' | 'rechazado') => {
     if (filtro === 'todos') {
       return invitados;
@@ -141,6 +184,7 @@ export const useAdmin = () => {
     eliminarTodosInvitados,
     actualizarInvitado,
     crearInvitado,
+    actualizarNotificado,
     filtrarInvitados,
   };
 };

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { InvitadoResponseDto } from '../../../shared/types/api';
 import { Button } from '../../../shared/components/Button';
 import { EditarInvitadoModal } from './EditarInvitadoModal';
+import { AdminService } from '../services/adminService';
 import type { ActualizarInvitadoDto } from '../services/adminService';
 
 interface TablaInvitadosEnhancedProps {
@@ -12,6 +13,7 @@ interface TablaInvitadosEnhancedProps {
   onEliminarTodos: () => Promise<void>;
   onActualizarInvitado: (id: string, datos: ActualizarInvitadoDto) => Promise<void>;
   onCrearInvitado: (datos: ActualizarInvitadoDto) => Promise<void>;
+  onActualizarNotificado: (id: string, notificado: boolean) => Promise<void>;
   loading?: boolean;
 }
 
@@ -23,8 +25,22 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
   onEliminarTodos,
   onActualizarInvitado,
   onCrearInvitado,
+  onActualizarNotificado,
   loading = false
 }) => {
+  // Debug: verificar los datos que llegan al componente
+  React.useEffect(() => {
+    const noelia = invitados.find(inv => inv.nombre.includes('Noelia'));
+    if (noelia) {
+      console.log('🎯 TablaInvitados - Noelia props:', {
+        nombre: noelia.nombre,
+        notificado: noelia.notificado,
+        notificadoType: typeof noelia.notificado,
+        hasNotificadoField: noelia.hasOwnProperty('notificado'),
+        allKeys: Object.keys(noelia)
+      });
+    }
+  }, [invitados]);
   const [filtroEstado, setFiltroEstado] = useState<'todos' | 'pendiente' | 'confirmado' | 'confirmado_incompleto' | 'rechazado'>('todos');
   const [busqueda, setBusqueda] = useState('');
   const [invitadoEditando, setInvitadoEditando] = useState<InvitadoResponseDto | null>(null);
@@ -33,6 +49,28 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
     tipo: 'individual' | 'todos';
     invitado?: InvitadoResponseDto;
   } | null>(null);
+  
+  const handleToggleNotificado = async (invitado: InvitadoResponseDto) => {
+    try {
+      console.log('🔄 Toggling notificado para:', invitado.id, 'de', invitado.notificado, 'a', !invitado.notificado);
+      await onActualizarNotificado(invitado.id, !invitado.notificado);
+      console.log('✅ Toggle exitoso');
+    } catch (error) {
+      console.error('❌ Error al actualizar notificado:', error);
+      
+      // Mostrar error más específico
+      const errorMsg = (error as any)?.response?.data?.error || (error as any)?.message || 'Error desconocido';
+      
+      if (errorMsg.includes('column') && errorMsg.includes('notificado')) {
+        alert(`🚨 ERROR: La base de datos no está configurada correctamente.\n\n` +
+              `Necesitas ejecutar este comando SQL en Supabase:\n\n` +
+              `ALTER TABLE invitados ADD COLUMN notificado BOOLEAN DEFAULT FALSE;\n\n` +
+              `Ve al archivo INSTRUCCIONES_SQL.md para más detalles.`);
+      } else {
+        alert('Error al actualizar el estado de notificación: ' + errorMsg);
+      }
+    }
+  };
   
 
   const invitadosFiltrados = invitados.filter(invitado => {
@@ -86,8 +124,6 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
     const mensaje = `🎓 ¡Invitación a mi Graduación!
 
 Hola ${nombreInvitado || 'Invitado'}!
-
-Te invito cordialmente a mi graduación de Ingeniería.
 
 📅 Sábado 6 de Septiembre, 19:00hs
 📍 Salón de Eventos Varela II
@@ -261,6 +297,9 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
               <th className="px-6 py-3 text-left text-xs font-semibold text-gray-900 uppercase tracking-wider">
                 Fecha Confirmación
               </th>
+              <th className="px-6 py-3 text-center text-xs font-semibold text-gray-900 uppercase tracking-wider">
+                Notificado
+              </th>
               <th className="px-6 py-3 text-right text-xs font-semibold text-gray-900 uppercase tracking-wider">
                 Acciones
               </th>
@@ -344,6 +383,28 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
                   
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                     {invitado.fechaConfirmacion ? formatFecha(invitado.fechaConfirmacion) : '-'}
+                  </td>
+                  
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
+                    <label className="flex justify-center items-center cursor-pointer" title={`Notificado: ${invitado.notificado} (${typeof invitado.notificado})`}>
+                      <input
+                        type="checkbox"
+                        checked={invitado.notificado === true}
+                        onChange={() => {
+                          console.log(`🔘 Checkbox clicked for ${invitado.nombre}:`, {
+                            currentValue: invitado.notificado,
+                            valueType: typeof invitado.notificado,
+                            willChangeTo: !invitado.notificado
+                          });
+                          handleToggleNotificado(invitado);
+                        }}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                        disabled={loading}
+                      />
+                      <span className="ml-2 text-xs text-gray-500">
+                        {invitado.notificado === true ? '✓' : '○'}
+                      </span>
+                    </label>
                   </td>
                   
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -488,6 +549,30 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
                 </div>
               </div>
             )}
+
+            {/* Notificado */}
+            <div className="mb-3 flex items-center space-x-2">
+              <span className="text-xs font-medium text-gray-700">Notificado:</span>
+              <label className="flex items-center cursor-pointer" title={`Notificado: ${invitado.notificado} (${typeof invitado.notificado})`}>
+                <input
+                  type="checkbox"
+                  checked={invitado.notificado === true}
+                  onChange={() => {
+                    console.log(`📱 Mobile checkbox clicked for ${invitado.nombre}:`, {
+                      currentValue: invitado.notificado,
+                      valueType: typeof invitado.notificado,
+                      willChangeTo: !invitado.notificado
+                    });
+                    handleToggleNotificado(invitado);
+                  }}
+                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                  disabled={loading}
+                />
+                <span className="ml-2 text-xs text-gray-600">
+                  {invitado.notificado === true ? 'Sí ✓' : 'No ○'}
+                </span>
+              </label>
+            </div>
 
             {/* Acciones */}
             <div className="flex items-center justify-between pt-3 border-t border-gray-100">

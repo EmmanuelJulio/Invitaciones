@@ -35,6 +35,7 @@ export class ObtenerInvitado {
           cantidadInvitaciones: invitado.getCantidadInvitaciones(),
           fechaLimiteEdicion: invitado.getFechaLimiteEdicion().toISOString(),
           whatsappEnviado: invitado.getWhatsappEnviado(),
+          notificado: invitado.getNotificado(),
           acompanantes: acompanantes.map(acomp => ({
             id: acomp.getId(),
             nombreCompleto: acomp.getNombreCompleto(),
