@@ -69,7 +69,7 @@ export const GestionAcompanantes: React.FC<GestionAcompanantesProps> = ({
 
       {acompanantes.length > 0 && (
         <div className="space-y-4">
-          <div className="text-sm text-gray-200 bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="text-sm text-blue-800 bg-blue-50 border border-blue-200 rounded-lg p-3">
             💡 <strong>Tip:</strong> Los datos de acompañantes son opcionales, pero nos ayudan con la organización del evento.
           </div>
 
@@ -99,7 +99,7 @@ export const GestionAcompanantes: React.FC<GestionAcompanantesProps> = ({
                   </label>
                   <input
                     type="text"
-                    className="form-input"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white placeholder-gray-500"
                     placeholder="Ej: Juan Pérez"
                     value={acompanante.nombreCompleto}
                     onChange={(e) => actualizarAcompanante(index, 'nombreCompleto', e.target.value)}
@@ -114,7 +114,7 @@ export const GestionAcompanantes: React.FC<GestionAcompanantesProps> = ({
                   </label>
                   <input
                     type="tel"
-                    className="form-input"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white placeholder-gray-500"
                     placeholder="Ej: +593 99 123 4567"
                     value={acompanante.telefono || ''}
                     onChange={(e) => actualizarAcompanante(index, 'telefono', e.target.value)}

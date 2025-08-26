@@ -58,7 +58,7 @@ class App {
       : ['http://localhost:5173'];
     
     // Add additional local dev ports
-    const devPorts = ['http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176'];
+    const devPorts = ['http://localhost:5177', 'http://localhost:5175', 'http://localhost:5176'];
     const allOrigins = [...allowedOrigins, ...devPorts];
     
     this.app.use(cors({

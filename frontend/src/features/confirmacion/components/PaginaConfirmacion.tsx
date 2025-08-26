@@ -93,7 +93,11 @@ export const PaginaConfirmacion: React.FC = () => {
               <div className="mt-6 pt-4 border-t border-white/30">
                 <p className="text-xs text-gray-300 flex items-center justify-center">
                   <span className="text-blue-400 mr-2">🎓</span>
-                  Graduación 2024 • Ingeniería • Invitación Digital
+                  Graduación 2025 • Ingeniería • Invitación Digital 
+                </p>
+                <p className="text-xs text-gray-300 flex items-center justify-center">
+                  <span className="text-blue-400 mr-2">🎓</span>
+                  ¡Creada producida y pensada por Emma! atr!
                 </p>
               </div>
             </div>

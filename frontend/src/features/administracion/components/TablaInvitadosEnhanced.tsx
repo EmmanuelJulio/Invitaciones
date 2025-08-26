@@ -78,11 +78,26 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
     window.open(url, '_blank');
   };
 
-  const handleCopiarURL = (token: string) => {
+  const handleCopiarURL = (token: string, nombreInvitado?: string) => {
     const url = `${window.location.origin}/confirmar/${token}`;
-    navigator.clipboard.writeText(url);
+    const mensaje = `🎓 ¡Invitación a mi Graduación!
+
+Hola ${nombreInvitado || 'Invitado'}!
+
+Te invito cordialmente a mi graduación de Ingeniería.
+
+📅 Sábado 6 de Septiembre, 19:00hs
+📍 Salón de Eventos Varela II
+⏰ Aproximadamente 7 horas
+
+👉 Confirma tu asistencia aquí: ${url}
+
+En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 11-3842-7868.
+
+¡Espero verte ahí! 🎉`;
+    navigator.clipboard.writeText(mensaje);
     // Opcional: mostrar toast de confirmación
-    alert('URL copiada al portapapeles');
+    alert('Mensaje de WhatsApp copiado al portapapeles');
   };
 
   const handleEditarInvitado = (invitado: InvitadoResponseDto) => {
@@ -131,10 +146,11 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
         </div>
         
         <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
+          {/* Botones ocultos en móvil */}
           <Button
             variant="secondary"
             onClick={onExportar}
-            className="flex items-center"
+            className="hidden sm:flex items-center"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -145,7 +161,7 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
           <Button
             variant="primary"
             onClick={onExportarMensajesWhatsApp}
-            className="flex items-center"
+            className="hidden sm:flex items-center"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -157,7 +173,7 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
             <Button
               variant="danger"
               onClick={handleEliminarTodos}
-              className="flex items-center"
+              className="hidden sm:flex items-center"
               disabled={loading}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +191,8 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
           <input
             type="text"
             placeholder="Buscar por nombre o teléfono..."
-            className="form-input"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900 placeholder-gray-400"
+            style={{color: '#111827 !important', backgroundColor: '#ffffff !important'}}
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
@@ -183,21 +200,22 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
         
         <div>
           <select
-            className="form-input"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-900"
+            style={{color: '#111827 !important', backgroundColor: '#ffffff !important'}}
             value={filtroEstado}
             onChange={(e) => setFiltroEstado(e.target.value as any)}
           >
-            <option value="todos">Todos los estados</option>
-            <option value="pendiente">Pendientes</option>
-            <option value="confirmado">Confirmados</option>
-            <option value="confirmado_incompleto">Incompletos</option>
-            <option value="rechazado">Rechazados</option>
+            <option value="todos" style={{color: '#111827', backgroundColor: '#ffffff'}}>Todos los estados</option>
+            <option value="pendiente" style={{color: '#111827', backgroundColor: '#ffffff'}}>Pendientes</option>
+            <option value="confirmado" style={{color: '#111827', backgroundColor: '#ffffff'}}>Confirmados</option>
+            <option value="confirmado_incompleto" style={{color: '#111827', backgroundColor: '#ffffff'}}>Incompletos</option>
+            <option value="rechazado" style={{color: '#111827', backgroundColor: '#ffffff'}}>Rechazados</option>
           </select>
         </div>
       </div>
 
-      {/* Tabla */}
-      <div className="overflow-x-auto">
+      {/* Tabla - Oculta en móvil */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -314,9 +332,9 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
                       
                       {/* Botón Copiar URL */}
                       <button
-                        onClick={() => handleCopiarURL(invitado.token)}
+                        onClick={() => handleCopiarURL(invitado.token, invitado.nombre)}
                         className="text-gray-600 hover:text-gray-900 transition-colors"
-                        title="Copiar URL"
+                        title="Copiar mensaje WhatsApp"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -366,6 +384,155 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
         )}
       </div>
 
+      {/* Vista móvil - Cards */}
+      <div className="md:hidden space-y-4">
+        {invitadosFiltrados.map((invitado) => (
+          <div key={invitado.id} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+            {/* Header con nombre y estado */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1 min-w-0">
+                <h4 className="text-sm font-medium text-gray-900 truncate">
+                  {invitado.nombre}
+                </h4>
+                <p className="text-xs text-gray-500 mt-1">
+                  {invitado.telefono || 'Sin teléfono'}
+                </p>
+              </div>
+              <div className="ml-2 flex-shrink-0">
+                {getEstadoBadge(invitado.estado)}
+              </div>
+            </div>
+
+            {/* Información de invitaciones */}
+            <div className="mb-3 flex flex-wrap gap-1">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {invitado.cantidadInvitaciones || 1} permitidas
+              </span>
+              
+              {(invitado.estado === 'confirmado' || invitado.estado === 'confirmado_incompleto') && (
+                <>
+                  {(() => {
+                    const totalConfirmadas = 1 + (invitado.acompanantes?.length || 0);
+                    const faltantes = (invitado.cantidadInvitaciones || 1) - totalConfirmadas;
+                    
+                    return (
+                      <>
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                          invitado.estado === 'confirmado' 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-orange-100 text-orange-800'
+                        }`}>
+                          {totalConfirmadas} confirmadas
+                        </span>
+                        
+                        {faltantes > 0 && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            {faltantes} pendientes
+                          </span>
+                        )}
+                      </>
+                    );
+                  })()}
+                </>
+              )}
+            </div>
+
+            {/* Acompañantes */}
+            {invitado.acompanantes && invitado.acompanantes.length > 0 && (
+              <div className="mb-3">
+                <div className="text-xs font-medium text-gray-700 uppercase tracking-wide mb-1">
+                  Acompañantes:
+                </div>
+                <div className="space-y-1">
+                  {invitado.acompanantes.map((acompanante) => (
+                    <div key={acompanante.id} className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0"></div>
+                      <div className="text-xs text-gray-600 min-w-0">
+                        <span className="font-medium">{acompanante.nombreCompleto}</span>
+                        {acompanante.telefono && (
+                          <span className="text-gray-500 ml-1">({acompanante.telefono})</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Acciones */}
+            <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+              <div className="flex space-x-3">
+                {/* Ver URL */}
+                <button
+                  onClick={() => handleVerURL(invitado.token)}
+                  className="text-blue-600 hover:text-blue-900 transition-colors"
+                  title="Ver página"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </button>
+                
+                {/* Copiar */}
+                <button
+                  onClick={() => handleCopiarURL(invitado.token, invitado.nombre)}
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                  title="Copiar mensaje WhatsApp"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
+
+                {/* Editar */}
+                <button
+                  onClick={() => handleEditarInvitado(invitado)}
+                  className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                  title="Editar"
+                  disabled={loading}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </button>
+
+                {/* Eliminar */}
+                <button
+                  onClick={() => handleEliminarInvitado(invitado)}
+                  className="text-red-600 hover:text-red-900 transition-colors"
+                  title="Eliminar"
+                  disabled={loading}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1-1H8a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Fecha (solo si está confirmado) */}
+              {invitado.fechaConfirmacion && (
+                <div className="text-xs text-gray-500">
+                  {formatFecha(invitado.fechaConfirmacion)}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+
+        {/* Empty state para móvil */}
+        {invitadosFiltrados.length === 0 && (
+          <div className="text-center py-8">
+            <div className="text-gray-400 mb-2">
+              <svg className="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <p className="text-gray-500">No se encontraron invitados</p>
+          </div>
+        )}
+      </div>
+
       {/* Modal de Edición */}
       {invitadoEditando && (
         <EditarInvitadoModal
@@ -379,8 +546,8 @@ export const TablaInvitadosEnhanced: React.FC<TablaInvitadosEnhancedProps> = ({
 
       {/* Modal de Confirmación de Eliminación */}
       {confirmandoEliminacion && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center z-50 p-2 sm:p-4 pt-4 sm:pt-8 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6 mt-2 sm:mt-0">
             <div className="flex items-center mb-4">
               <div className="flex-shrink-0">
                 <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -199,7 +199,7 @@ export const FormularioConfirmacion: React.FC<FormularioConfirmacionProps> = ({
             ¡Hola {nombre}!
           </h3>
           <p className="text-gray-200 mb-4">
-            Por favor confirma tu asistencia a nuestra graduación
+            Por favor confirma tu asistencia al evento!
           </p>
           
           {necesitaAcompanantes && (
@@ -231,7 +231,7 @@ export const FormularioConfirmacion: React.FC<FormularioConfirmacionProps> = ({
             <textarea
               id="mensaje"
               rows={3}
-              className="form-input"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white placeholder-gray-500"
               placeholder="Deja un mensaje opcional..."
               value={mensaje}
               onChange={(e) => setMensaje(e.target.value)}
@@ -252,7 +252,7 @@ export const FormularioConfirmacion: React.FC<FormularioConfirmacionProps> = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               {necesitaAcompanantes && acompanantes.length === 0 
-                ? 'Confirmar (sin acompañantes)' 
+                ? 'Confirmar' 
                 : `Confirmar Asistencia${acompanantes.length > 0 ? ` (+${acompanantes.length})` : ''}`
               }
             </Button>

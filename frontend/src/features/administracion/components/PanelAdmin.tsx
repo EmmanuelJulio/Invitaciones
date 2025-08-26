@@ -31,7 +31,8 @@ export const PanelAdmin: React.FC = () => {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <LoadingSpinner size="lg" className="mx-auto mb-4" />
+          <LoadingSpinner size="lg" className="mx-auto mb-6" withLogo={true} />
+          <h3 className="text-xl font-semibold text-white mb-2">Panel de Administración</h3>
           <p className="text-gray-200">Verificando autenticación...</p>
         </div>
       </div>
@@ -46,7 +47,8 @@ export const PanelAdmin: React.FC = () => {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
-          <LoadingSpinner size="lg" className="mx-auto mb-4" />
+          <LoadingSpinner size="lg" className="mx-auto mb-6" withLogo={true} />
+          <h3 className="text-xl font-semibold text-white mb-2">Panel de Administración</h3>
           <p className="text-gray-200">Cargando panel de administración...</p>
         </div>
       </div>
@@ -58,33 +60,36 @@ export const PanelAdmin: React.FC = () => {
       {/* Header */}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div>
-              <h1 className="text-3xl font-bold text-white">Panel de Administración</h1>
-              <p className="text-gray-200">Gestión de invitaciones de graduación</p>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center py-6 space-y-4 sm:space-y-0">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Panel de Administración</h1>
+              <p className="text-gray-600 mt-1">Gestión de invitaciones de graduación</p>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center sm:justify-end space-x-2 sm:space-x-4 flex-shrink-0">
               <Button
                 variant="secondary"
                 onClick={cargarInvitados}
                 loading={adminLoading}
-                className="flex items-center"
+                className="flex items-center text-sm sm:text-base"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                 </svg>
-                Actualizar
+                <span className="hidden sm:inline">Actualizar</span>
+                <span className="sm:hidden">↻</span>
               </Button>
               
               <Button
                 variant="danger"
                 onClick={logout}
+                className="flex items-center text-sm sm:text-base"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mr-1 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Cerrar Sesión
+                <span className="hidden sm:inline">Cerrar Sesión</span>
+                <span className="sm:hidden">Salir</span>
               </Button>
             </div>
           </div>
@@ -92,7 +97,7 @@ export const PanelAdmin: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="w-full px-2 sm:px-4 lg:px-6 py-8">
         <div className="space-y-8">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -119,7 +124,7 @@ export const PanelAdmin: React.FC = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     tabActiva === 'lista'
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-white hover:border-white/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -133,7 +138,7 @@ export const PanelAdmin: React.FC = () => {
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     tabActiva === 'cargar'
                       ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-white hover:border-white/50'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
                   <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

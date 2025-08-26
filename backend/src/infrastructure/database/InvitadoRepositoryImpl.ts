@@ -59,6 +59,7 @@ export class InvitadoRepositoryImpl implements InvitadoRepository {
       nombre: invitado.getNombre(),
       telefono: invitado.getTelefono(),
       mensaje: invitado.getMensaje(),
+      cantidad_invitaciones: invitado.getCantidadInvitaciones(),
       estado: invitado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado',
       fecha_confirmacion: invitado.getFechaConfirmacion()?.toISOString()
     };
