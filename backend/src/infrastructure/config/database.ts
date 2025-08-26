@@ -23,10 +23,24 @@ export const supabaseAdmin = createClient(
 export interface DatabaseInvitado {
   id: string;
   nombre: string;
-  telefono: string;
+  telefono?: string;
   mensaje?: string;
   token: string;
-  estado: 'pendiente' | 'confirmado' | 'rechazado';
+  estado: 'pendiente' | 'confirmado' | 'confirmado_incompleto' | 'rechazado';
   fecha_confirmacion?: string;
   created_at: string;
+  cantidad_invitaciones: number;
+  fecha_limite_edicion: string;
+  whatsapp_enviado: boolean;
+  fecha_envio_whatsapp?: string;
+  intentos_envio: number;
+}
+
+export interface DatabaseAcompanante {
+  id: string;
+  invitado_id: string;
+  nombre_completo: string;
+  telefono?: string;
+  created_at: string;
+  updated_at: string;
 }

@@ -1,22 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useAdmin } from '../hooks/useAdmin';
+import { useCargarExcel } from '../hooks/useCargarExcel';
 import { LoginForm } from './LoginForm';
 import { EstadisticasCard } from './EstadisticasCard';
-import { TablaInvitados } from './TablaInvitados';
+import { TablaInvitadosEnhanced } from './TablaInvitadosEnhanced';
+import { CargarInvitados } from './CargarInvitados';
 import { LoadingSpinner } from '../../../shared/components/LoadingSpinner';
 import { Button } from '../../../shared/components/Button';
 
+type TabType = 'lista' | 'cargar';
+
 export const PanelAdmin: React.FC = () => {
   const { isAuthenticated, loading: authLoading, login, logout } = useAuth();
-  const { invitados, estadisticas, loading: adminLoading, error, cargarInvitados, exportarCSV } = useAdmin();
+  const { invitados, estadisticas, loading: adminLoading, error, cargarInvitados, exportarCSV, exportarMensajesWhatsApp } = useAdmin();
+  const [tabActiva, setTabActiva] = useState<TabType>('lista');
+
 
   if (authLoading) {
     return (
       <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="lg" className="mx-auto mb-4" />
-          <p className="text-gray-600">Verificando autenticación...</p>
+          <p className="text-gray-200">Verificando autenticación...</p>
         </div>
       </div>
     );
@@ -31,7 +37,7 @@ export const PanelAdmin: React.FC = () => {
       <div className="min-h-screen gradient-bg flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner size="lg" className="mx-auto mb-4" />
-          <p className="text-gray-600">Cargando panel de administración...</p>
+          <p className="text-gray-200">Cargando panel de administración...</p>
         </div>
       </div>
     );
@@ -44,8 +50,8 @@ export const PanelAdmin: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
-              <p className="text-gray-600">Gestión de invitaciones de graduación</p>
+              <h1 className="text-3xl font-bold text-white">Panel de Administración</h1>
+              <p className="text-gray-200">Gestión de invitaciones de graduación</p>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -94,11 +100,55 @@ export const PanelAdmin: React.FC = () => {
             <EstadisticasCard estadisticas={estadisticas} />
           )}
 
-          {/* Tabla de invitados */}
-          <TablaInvitados 
-            invitados={invitados} 
-            onExportar={exportarCSV}
-          />
+          {/* Navegación por pestañas */}
+          <div className="bg-white rounded-lg shadow">
+            <div className="border-b border-gray-200">
+              <nav className="-mb-px flex space-x-8 px-6">
+                <button
+                  onClick={() => setTabActiva('lista')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    tabActiva === 'lista'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-300 hover:text-white hover:border-white/50'
+                  }`}
+                >
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                  </svg>
+                  Lista de Invitados
+                </button>
+                
+                <button
+                  onClick={() => setTabActiva('cargar')}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    tabActiva === 'cargar'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-300 hover:text-white hover:border-white/50'
+                  }`}
+                >
+                  <svg className="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  Cargar desde Excel
+                </button>
+              </nav>
+            </div>
+
+            {/* Contenido de las pestañas */}
+            <div className="p-6">
+              {tabActiva === 'lista' && (
+                <TablaInvitadosEnhanced 
+                  invitados={invitados} 
+                  onExportar={exportarCSV}
+                  onExportarMensajesWhatsApp={exportarMensajesWhatsApp}
+                />
+              )}
+              
+              {tabActiva === 'cargar' && (
+                <CargarInvitados onSuccess={cargarInvitados} />
+              )}
+            </div>
+          </div>
         </div>
       </main>
     </div>

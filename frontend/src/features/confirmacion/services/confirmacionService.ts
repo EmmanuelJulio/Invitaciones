@@ -24,6 +24,7 @@ export class ConfirmacionService {
       {
         confirmado: dto.confirmado,
         mensaje: dto.mensaje,
+        acompanantes: dto.acompanantes,
       }
     );
     return response.data;

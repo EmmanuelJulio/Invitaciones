@@ -37,6 +37,15 @@ export const useAdmin = () => {
     }
   };
 
+  const exportarMensajesWhatsApp = () => {
+    try {
+      AdminService.exportarMensajesWhatsApp(invitados);
+    } catch (err) {
+      console.error('Error exportando mensajes WhatsApp:', err);
+      setError('Error al exportar mensajes de WhatsApp');
+    }
+  };
+
   const filtrarInvitados = (filtro: 'todos' | 'pendiente' | 'confirmado' | 'rechazado') => {
     if (filtro === 'todos') {
       return invitados;
@@ -55,6 +64,7 @@ export const useAdmin = () => {
     error,
     cargarInvitados,
     exportarCSV,
+    exportarMensajesWhatsApp,
     filtrarInvitados,
   };
 };
