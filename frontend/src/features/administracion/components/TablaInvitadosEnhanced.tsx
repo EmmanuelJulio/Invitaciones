@@ -566,7 +566,7 @@ En caso de no poder asistir, por favor avisar con 48 horas de anticipación al 1
       {/* Modal de Edición/Creación */}
       {(invitadoEditando || modoModal === 'crear') && (
         <EditarInvitadoModal
-          invitado={invitadoEditando}
+          invitado={invitadoEditando || undefined}
           isOpen={!!(invitadoEditando || modoModal === 'crear')}
           onClose={() => {
             setInvitadoEditando(null);
