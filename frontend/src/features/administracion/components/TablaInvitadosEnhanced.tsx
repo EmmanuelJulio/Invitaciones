@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import type { InvitadoResponseDto } from '../../../shared/types/api';
 import { Button } from '../../../shared/components/Button';
 import { EditarInvitadoModal } from './EditarInvitadoModal';
-import { AdminService } from '../services/adminService';
 import type { ActualizarInvitadoDto } from '../services/adminService';
 
 interface TablaInvitadosEnhancedProps {
