@@ -1,13 +1,15 @@
 export class DatosContacto {
   private readonly nombre: string;
-  private readonly telefono: string;
+  private readonly telefono?: string;
 
-  constructor(nombre: string, telefono: string) {
+  constructor(nombre: string, telefono?: string) {
     this.validateNombre(nombre);
-    this.validateTelefono(telefono);
+    if (telefono) {
+      this.validateTelefono(telefono);
+    }
     
     this.nombre = nombre.trim();
-    this.telefono = telefono.trim();
+    this.telefono = telefono?.trim();
   }
 
   private validateNombre(nombre: string): void {
@@ -26,7 +28,7 @@ export class DatosContacto {
 
   private validateTelefono(telefono: string): void {
     if (!telefono || telefono.trim().length === 0) {
-      throw new Error('El teléfono no puede estar vacío');
+      return; // Teléfono opcional
     }
     
     // Remove spaces, dashes, and parentheses for validation
@@ -41,12 +43,12 @@ export class DatosContacto {
     return this.nombre;
   }
 
-  getTelefono(): string {
+  getTelefono(): string | undefined {
     return this.telefono;
   }
 
-  getTelefonoLimpio(): string {
-    return this.telefono.replace(/[\s\-\(\)]/g, '');
+  getTelefonoLimpio(): string | undefined {
+    return this.telefono?.replace(/[\s\-\(\)]/g, '');
   }
 
   equals(other: DatosContacto): boolean {

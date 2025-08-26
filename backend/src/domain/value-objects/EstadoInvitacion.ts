@@ -1,6 +1,7 @@
 export enum EstadoInvitacionEnum {
   PENDIENTE = 'pendiente',
   CONFIRMADO = 'confirmado',
+  CONFIRMADO_INCOMPLETO = 'confirmado_incompleto',
   RECHAZADO = 'rechazado'
 }
 
@@ -27,6 +28,14 @@ export class EstadoInvitacion {
     return this.value === EstadoInvitacionEnum.CONFIRMADO;
   }
 
+  isConfirmadoIncompleto(): boolean {
+    return this.value === EstadoInvitacionEnum.CONFIRMADO_INCOMPLETO;
+  }
+
+  isConfirmadoCompletaOIncompleta(): boolean {
+    return this.value === EstadoInvitacionEnum.CONFIRMADO || this.value === EstadoInvitacionEnum.CONFIRMADO_INCOMPLETO;
+  }
+
   isRechazado(): boolean {
     return this.value === EstadoInvitacionEnum.RECHAZADO;
   }
@@ -39,6 +48,10 @@ export class EstadoInvitacion {
     return new EstadoInvitacion(EstadoInvitacionEnum.CONFIRMADO);
   }
 
+  static confirmadoIncompleto(): EstadoInvitacion {
+    return new EstadoInvitacion(EstadoInvitacionEnum.CONFIRMADO_INCOMPLETO);
+  }
+
   static rechazado(): EstadoInvitacion {
     return new EstadoInvitacion(EstadoInvitacionEnum.RECHAZADO);
   }
@@ -49,6 +62,8 @@ export class EstadoInvitacion {
         return EstadoInvitacion.pendiente();
       case 'confirmado':
         return EstadoInvitacion.confirmado();
+      case 'confirmado_incompleto':
+        return EstadoInvitacion.confirmadoIncompleto();
       case 'rechazado':
         return EstadoInvitacion.rechazado();
       default:

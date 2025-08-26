@@ -37,7 +37,7 @@ export class InvitadoController {
   async confirmar(req: Request, res: Response): Promise<void> {
     try {
       const { token } = req.params;
-      const { confirmado, mensaje } = req.body;
+      const { confirmado, mensaje, acompanantes } = req.body;
       
       if (!token) {
         res.status(400).json({ error: 'Token es requerido' });
@@ -52,7 +52,8 @@ export class InvitadoController {
       const resultado = await this.confirmarAsistencia.execute({
         token,
         confirmado,
-        mensaje
+        mensaje,
+        acompanantes
       });
 
       res.json(resultado);

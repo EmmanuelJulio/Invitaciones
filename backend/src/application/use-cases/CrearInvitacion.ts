@@ -9,7 +9,7 @@ export class CrearInvitacion {
   async execute(dto: CrearInvitadoDto): Promise<InvitadoResponseDto> {
     try {
       const id = uuidv4();
-      const invitado = Invitado.create(id, dto.nombre, dto.telefono, dto.mensaje);
+      const invitado = Invitado.create(id, dto.nombre, dto.telefono, 1, dto.mensaje);
       
       const invitadoGuardado = await this.invitadoRepository.save(invitado);
 
@@ -18,10 +18,14 @@ export class CrearInvitacion {
         nombre: invitadoGuardado.getNombre(),
         telefono: invitadoGuardado.getTelefono(),
         token: invitadoGuardado.getTokenValue(),
-        estado: invitadoGuardado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado',
+        estado: invitadoGuardado.getEstadoValue() as 'pendiente' | 'confirmado' | 'rechazado' | 'confirmado_incompleto',
         mensaje: invitadoGuardado.getMensaje(),
         fechaConfirmacion: invitadoGuardado.getFechaConfirmacion()?.toISOString(),
-        fechaCreacion: invitadoGuardado.getFechaCreacion().toISOString()
+        fechaCreacion: invitadoGuardado.getFechaCreacion().toISOString(),
+        cantidadInvitaciones: invitadoGuardado.getCantidadInvitaciones(),
+        fechaLimiteEdicion: invitadoGuardado.getFechaLimiteEdicion().toISOString(),
+        whatsappEnviado: invitadoGuardado.getWhatsappEnviado(),
+        acompanantes: [] // Los acompañantes se agregan después
       };
     } catch (error) {
       throw new Error(`Error al crear invitación: ${(error as Error).message}`);
